@@ -59,8 +59,14 @@ my_mets
 
 ```{r}
 mets_ben <- Teams |>
-  dplyr::select(yearID, teamID, G, RA, RS = R) |>
+  dplyr::select(yearID, teamID, G, W, L, RA, R) |>
   dplyr::filter(teamID == "NYN" & yearID %in% 2004:2012)
+mets_ben
+```
+
+```{r}
+mets_ben <- mets_ben |>
+  dplyr::mutate(RS = R)    # new name = old name
 mets_ben
 ```
 
@@ -72,36 +78,143 @@ mets_ben
 
 ```
 
+...
+
 ```{r}
 
 ```
-
-...
 
 ### Exercise 4
 
 ...
 
+```{r}
+mets_ben <- mets_ben |>
+  dplyr::mutate(WPct = W / (W + L))
+mets_ben
+```
+
+```{r}
+mets_ben <- mets_ben |>
+  dplyr::mutate(W_hat = WPct * G)
+mets_ben
+```
+
 ### Exercise 5
 
 ...
+
+```{r}
+mets_ben <- mets_ben |>
+  dplyr::mutate(Difference = W - W_hat)
+better_than_expected <- sum(mets_ben$Difference > 0)
+worse_than_expected <- sum(mets_ben$Difference < 0)
+cat("Seasons better than expected:", better_than_expected, "\n")
+cat("Seasons worse than expected:", worse_than_expected, "\n")
+```
 
 ### Exercise 6
 
 ...
 
+```{r}
+dplyr::arrange(mets_ben, desc(WPct))
+```
+
 ### Exercise 7
 
 ...
+
+```{r}
+mets_ben %>% 
+  dplyr::mutate(Diff = WPct - W_hat) |>
+  dplyr::arrange(desc(Diff))
+```
 
 ### Exercise 8
 
 ...
 
+```{r}
+mets_ben |>
+  dplyr::summarize(
+    num_years = nrow(mets_ben), 
+    total_W = sum(W), 
+    total_L = sum(L), 
+    total_WPct = mean(WPct), 
+    sum_resid = sum(WPct - W_hat)
+  )
+```
+
+```{r}
+total_wins <- sum(mets_ben$W)
+total_losses <- sum(mets_ben$L)
+overall_winning_percentage <- total_wins / (total_wins + total_losses)
+
+cat("In these nine years, the Mets had a combined record of", total_wins, "wins and", total_losses, "losses, for an overall winning percentage of", overall_winning_percentage)
+```
+
 ### Exercise 9
 
+```{r}
+library(ggplot2)
+ls()
+```
+
 ...
+
+```{r}
+ggplot(data =Ikea, aes(x = width, y = Price)) +
+  geom_point() + 
+  labs(
+    x = "Width (in cm)", 
+    y = "Price (in USD)", 
+    title = "Relationship between Ikea Furniture Width and Price"
+    )
+```
 
 ### Exercise 10
 
 ...
+
+```{r}
+mets_ben <- mets_ben |>
+  dplyr::mutate(
+    gm = dplyr::case_when(
+      yearID == 2004 ~ "Jim Duquette", 
+      yearID >= 2005 & yearID <= 2010 ~ "Omar Minaya",
+      yearID >= 2011 & yearID <= 2012 ~ "Sandy Alderson", 
+      TRUE ~ "Other"
+    )
+  )
+```
+
+```{r}
+library(dplyr)
+
+mets_ben <- mets_ben %>%
+  dplyr::mutate(
+    gm = case_when(
+      yearID == 2004 ~ "Jim Duquette",
+      yearID >= 2005 & yearID <= 2010 ~ "Omar Minaya",
+      yearID >= 2011 ~ "Sandy Alderson"
+    )
+  )
+
+```
+
+```{}
+```
+
+### Exercise 11
+
+```{r}
+mets_ben <- mets_ben %>%
+  dplyr::mutate(WPct = W / (W + L),
+                W_hat = RS^2 / (RS^2 + RA^2))
+
+```
+
+```{r}
+
+```
