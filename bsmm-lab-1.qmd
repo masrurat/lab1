@@ -191,6 +191,7 @@ mets_ben <- mets_ben |>
 
 ```{r}
 
+{r}
 library(dplyr)
 
 mets_ben <- mets_ben %>%
@@ -207,6 +208,21 @@ mets_ben <- mets_ben %>%
 ```{}
 ```
 
+```{r}
+{r}
+library(dplyr)
+
+mets_ben <- mets_ben %>%
+  dplyr::mutate(
+    gm = case_when(
+      yearID == 2004 ~ "Jim Duquette",
+      yearID >= 2005 & yearID <= 2010 ~ "Omar Minaya",
+      yearID >= 2011 ~ "Sandy Alderson"
+    )
+  )
+
+```
+
 ### Exercise 11
 
 ```{r}
@@ -217,5 +233,15 @@ mets_ben <- mets_ben %>%
 ```
 
 ```{r}
+mets_ben_grouped <- mets_ben %>%
+  group_by(gm) %>%
+  summarize(
+    num_years = n(),
+    total_W = sum(W),
+    total_L = sum(L),
+    total_WPct = mean(WPct),
+    sum_resid = sum(WPct - W_hat)
+  )
 
+print(mets_ben_grouped)
 ```
